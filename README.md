@@ -1,0 +1,2 @@
+# trx-sniper-bot
+.
