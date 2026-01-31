@@ -1,86 +1,104 @@
 const express = require("express");
 const TelegramBot = require("node-telegram-bot-api");
 
+// ===== CONFIG =====
+const TOKEN = "8596287676:AAFSZ1q90NaJdIlY7kjIrlblNUCTwdp3BIA";
+const AUTO_DELAY = 60000; // 1 minute
+
+// ===== APP =====
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.get("/", (req, res) => res.send("TRX Auto Signal Bot Running..."));
+app.listen(process.env.PORT || 3000);
 
-app.get("/", (req, res) => res.send("TRX Signal Bot Running..."));
-app.listen(PORT, () => console.log("Server running on port", PORT));
+// ===== BOT =====
+const bot = new TelegramBot(TOKEN, { polling: true });
 
-// ===== BOT TOKEN =====
-const bot = new TelegramBot("8596287676:AAFSZ1q90NaJdIlY7kjIrlblNUCTwdp3BIA", {
-    polling: true
-});
-
-// Random Functions
-function randomPeriod() {
-    return "2026" + Date.now().toString().slice(-11);
-}
-function randomChoice() {
-    return Math.random() > 0.5 ? "BIG 1x" : "SMALL 1x";
-}
-function randomResult() {
-    const win = Math.random() > 0.3;
-    const num = Math.floor(Math.random() * 10);
-    return { win, num };
-}
-
-// Buttons
+// Button Menu
 const menu = {
-    reply_markup: {
-        keyboard: [
-            ["📊 Prediction History", "🧠 Strategy Performance"],
-            ["🛑 STOP", "🔄 Reset Stats"]
-        ],
-        resize_keyboard: true
-    }
+  reply_markup: {
+    keyboard: [
+      ["📊 Prediction History", "🧠 Strategy Performance"],
+      ["🛑 STOP", "🔄 Reset Stats"]
+    ],
+    resize_keyboard: true
+  }
 };
 
-// Start
-bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(
-        msg.chat.id,
-        "🚀 Welcome to TRX SIGNAL BOT\nChoose a command:",
-        menu
-    );
-});
+// SYSTEM VARIABLES
+let autoRunning = true;
 
-// Predict
-bot.onText(/predict|Prediction/i, (msg) => {
-    const period = randomPeriod();
-    const choice = randomChoice();
-    const result = randomResult();
-    const status = result.win ? "🟢 WIN" : "🔴 LOSE";
-    const label = choice.includes("BIG") ? "BIG" : "SMALL";
+// Generate Random Values
+const rand = (max) => Math.floor(Math.random() * max);
 
-    const text =
+function generatePeriod() {
+  return "2026" + Date.now().toString().slice(-11);
+}
+
+function generateChoice() {
+  return Math.random() > 0.5 ? "BIG 1x" : "SMALL 1x";
+}
+
+function generateResult(choice) {
+  const win = Math.random() > 0.3; 
+  const num = rand(10);
+
+  return {
+    win,
+    num,
+    label: choice.includes("BIG") ? "BIG" : "SMALL",
+  };
+}
+
+// Auto Signal Function
+async function sendAutoSignal() {
+  if (!autoRunning) return;
+
+  const period = generatePeriod();
+  const choice = generateChoice();
+  const result = generateResult(choice);
+  const status = result.win ? "🟢 WIN" : "🔴 LOSE";
+
+  const msg =
 `🚩 *TRX Signal* 🚩
 
 ⏰ *Period:* ${period}
 🎯 *Choice:* ${choice}
-📊 *Result:* ${status} | ${label} (${result.num})`;
+📊 *Result:* ${status} | ${result.label} (${result.num})`;
 
-    bot.sendMessage(msg.chat.id, text, { parse_mode: "Markdown" });
+  // Send to your chat
+  bot.sendMessage("@Cklotter_hsai_2_bot", msg, { parse_mode: "Markdown" });
 
-    // GIF
-    bot.sendAnimation(
-        msg.chat.id,
-        "https://media.tenor.com/1ItmJQG6C2AAAAAC/patrick-bateman-american-psycho.gif"
-    );
+  bot.sendAnimation(
+    "@Cklotter_hsai_2_bot",
+    "https://media.tenor.com/1ItmJQG6C2AAAAAC/patrick-bateman-american-psycho.gif"
+  );
+}
+
+// Start Auto Loop
+setInterval(sendAutoSignal, AUTO_DELAY);
+
+// Commands
+bot.onText(/\/start/, (msg) => {
+  autoRunning = true;
+  bot.sendMessage(msg.chat.id, "🚀 Auto TRX Signal Bot Started!", menu);
 });
 
-// Stats
-bot.onText(/stats|history|performance/i, (msg) => {
-    const rate = Math.floor(Math.random() * 15) + 85;
-    bot.sendMessage(msg.chat.id, `📊 Live Win Rate: *${rate}%*`, { parse_mode: "Markdown" });
-});
-
-// Reset Stats
-bot.onText(/reset/i, (msg) => {
-    bot.sendMessage(msg.chat.id, "🔄 Stats reset successfully.");
-});
-
-// Stop
 bot.onText(/stop/i, (msg) => {
-    bot.sendMessage(msg.chat.id, "🛑 Auto Signal Stopped.");
+  autoRunning = false;
+  bot.sendMessage(msg.chat.id, "🛑 Auto Mode Stopped.");
+});
+
+bot.onText(/reset/i, (msg) => {
+  bot.sendMessage(msg.chat.id, "🔄 Stats successfully reset!");
+});
+
+bot.onText(/predict/i, (msg) => {
+  sendAutoSignal();
+});
+
+bot.onText(/stats|history|performance/i, (msg) => {
+  const rate = rand(15) + 85;
+  bot.sendMessage(msg.chat.id, `📊 Live Win Rate: *${rate}%*`, {
+    parse_mode: "Markdown"
+  });
 });
