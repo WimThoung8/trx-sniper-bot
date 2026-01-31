@@ -31,14 +31,15 @@ bot.onText(/\/start/, (msg) => {
 
 // Predict command
 bot.onText(/\/predict/, (msg) => {
-  const signals = ["UP 📈", "DOWN 📉"];
-  const signal = signals[Math.floor(Math.random() * signals.length)];
+    const signals = ["UP 📈", "DOWN 📉", "BIG 🔥", "SMALL 🧊"];
+    const signal = signals[Math.floor(Math.random() * signals.length)];
 
-  bot.sendMessage(
-    msg.chat.id,
-    "📡 TRX Sniper Prediction:\n\nSignal: " + signal
-  );
+    bot.sendMessage(
+        msg.chat.id,
+        "🔮 TRX Sniper Prediction:\n\nSignal: " + signal
+    );
 });
+
 
 // Stats
 bot.onText(/\/stats/, (msg) => {
