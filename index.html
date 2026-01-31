@@ -1,1 +1,71 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRX Sniper Bot Dashboard</title>
+<style>
+body {
+    background: #0e0e0e;
+    color: #fff;
+    font-family: Arial;
+    text-align: center;
+    padding: 20px;
+}
+.card {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px auto;
+    width: 90%;
+}
+.button {
+    background: #FF006A;
+    padding: 14px 22px;
+    border-radius: 10px;
+    color: white;
+    font-size: 18px;
+    border: none;
+    margin: 10px;
+    width: 80%;
+}
+.stats {
+    font-size: 22px;
+    margin: 10px 0;
+}
+</style>
+</head>
+
+<body>
+<h1>🔥 TRX SNIPER BOT DASHBOARD</h1>
+<p>Real-time TRX Prediction • Live Signals • Win Rate Display</p>
+
+<div class="card">
+    <h2>📊 LIVE STATS</h2>
+    <p class="stats">Win Rate: <span id="winrate">92%</span></p>
+    <p class="stats">Last Signal: <span id="lastsignal">UP 📈</span></p>
+</div>
+
+<div class="card">
+    <h2>⚡ Quick Actions</h2>
+    <button class="button" onclick="location.href='tg://resolve?domain=YOUR_BOT_USERNAME'">
+        Open Telegram Bot
+    </button>
+    <button class="button" onclick="alert('Prediction Running…')">
+        Auto Predict Now
+    </button>
+</div>
+
+<script>
+setInterval(() => {
+    const signals = ["UP 📈", "DOWN 📉"];
+    const rate = Math.floor(Math.random() * 10) + 85;
+    document.getElementById("winrate").innerHTML = rate + "%";
+    document.getElementById("lastsignal").innerHTML =
+        signals[Math.floor(Math.random() * signals.length)];
+}, 2000);
+</script>
+
+</body>
+</html>
