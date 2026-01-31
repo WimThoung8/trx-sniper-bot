@@ -31,7 +31,7 @@ bot.onText(/\/start/, (msg) => {
 
 // Predict command
 bot.onText(/\/predict/, (msg) => {
-    const signals = ["UP 📈", "DOWN 📉", "BIG 🔥", "SMALL 🧊"];
+    const signals = [ "BIG 🔥", "SMALL 🧊"];
     const signal = signals[Math.floor(Math.random() * signals.length)];
 
     bot.sendMessage(
