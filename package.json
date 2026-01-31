@@ -1,5 +1,5 @@
 {
-  "name": "trx-signal-bot",
+  "name": "trx-auto-signal-bot",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
